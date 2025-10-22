@@ -1,16 +1,21 @@
-require('dotenv').config({ path: '../.env' }); // Load environment variables from the root .env file
 const express = require('express');
 const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000; // Use PORT from environment variables or default to 3000
 
 // Middleware to parse JSON bodies
 app.use(express.json());
 
 // Initialize Supabase client with service role key
-const supabaseUrl = process.env.SUPABASE_URL || 'https://fblavdrxyokyhvlsnott.supabase.co';
-const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZibGF2ZHJxeW9reWh2aXNub3R0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MTA2NTYyMywiZXhwIjoyMDc2NjQxNjIzfQ.moTPQp-blmK2Hw39VNVZOTTpbDnr6SWgM95BDc5vElI';
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!supabaseUrl || !supabaseServiceRoleKey) {
+  console.error('Supabase URL and Service Role Key are required environment variables.');
+  process.exit(1); // Exit if essential environment variables are missing
+}
+
 const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
 
 // Middleware to verify Supabase access token
